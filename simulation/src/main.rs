@@ -13,28 +13,35 @@ use std::{
 use anyhow::Context;
 use clap::Parser;
 use cli::Cli;
+use env_logger::Env;
 use sumo::{connect_with_retry, launch_sumo, run_simulation};
 use v2x::build_publishers;
 
 fn main() -> anyhow::Result<()> {
-    env_logger::init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
     let args = Cli::parse();
     let ctrlc_pressed = register_ctrlc_handler()?;
 
     let _sumo_process = if args.launch_sumo {
-        Some(launch_sumo(&args.sumo, args.port)?)
+        Some(launch_sumo(&args.sumo, args.traci_addr.port())?)
     } else {
         None
     };
 
     let mut client = connect_with_retry(
-        &args.host,
-        args.port,
+        args.traci_addr,
         Duration::from_secs(args.connect_timeout_secs),
     )?;
 
-    let mut publishers = build_publishers(&args.messages);
-    run_simulation(&mut client, &mut publishers, ctrlc_pressed.as_ref())
+    let mut publishers = build_publishers(&args.destinations)?;
+    if let Err(e) = run_simulation(&mut client, &mut publishers, ctrlc_pressed.as_ref()) {
+        if ctrlc_pressed.load(Ordering::Relaxed) {
+            log::info!("Simulation interrupted by user.");
+        } else {
+            return Err(e);
+        }
+    }
+    Ok(())
 }
 
 fn register_ctrlc_handler() -> anyhow::Result<Arc<AtomicBool>> {

@@ -1,7 +1,8 @@
 use std::{
+    net::SocketAddr,
     path::Path,
-    sync::atomic::{AtomicBool, Ordering},
     process::{Child, Command, Stdio},
+    sync::atomic::{AtomicBool, Ordering},
     thread::sleep,
     time::{Duration, Instant},
 };
@@ -48,12 +49,6 @@ pub fn launch_sumo(args: &SumoLaunchOptions, port: u16) -> Result<ManagedSumoPro
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
 
-    #[cfg(unix)]
-    {
-        use std::os::unix::process::CommandExt;
-        cmd.process_group(0);
-    }
-
     if args.start {
         cmd.arg("--start");
     }
@@ -66,19 +61,19 @@ pub fn launch_sumo(args: &SumoLaunchOptions, port: u16) -> Result<ManagedSumoPro
 }
 
 /// Connects to a TraCI server, retrying until timeout.
-pub fn connect_with_retry(host: &str, port: u16, timeout: Duration) -> Result<TraciClient> {
+pub fn connect_with_retry(addr: SocketAddr, timeout: Duration) -> Result<TraciClient> {
     let started_at = Instant::now();
+    let host = addr.ip().to_string();
 
     loop {
-        match TraciClient::connect(host, port) {
+        match TraciClient::connect(&host, addr.port()) {
             Ok(client) => return Ok(client),
             Err(err) => {
                 let last_error = err.to_string();
                 if started_at.elapsed() >= timeout {
                     bail!(
-                        "failed to connect to TraCI at {}:{} after {:?}: {}",
-                        host,
-                        port,
+                        "failed to connect to TraCI at {} after {:?}: {}",
+                        addr,
                         timeout,
                         last_error
                     );
@@ -99,9 +94,8 @@ pub fn run_simulation(
     let sim_scope = SimulationScope::default();
     let simulation_result = (|| -> Result<()> {
         while !shutdown_requested.load(Ordering::Relaxed) && client.simulation_step(0.0)? {
-            let vehicle_ids = client.vehicle_get_id_list()?;
             for publisher in publishers.iter_mut() {
-                publisher.publish_step(client, &sim_scope, &vehicle_ids)?;
+                publisher.publish_step(client, &sim_scope)?;
             }
         }
 

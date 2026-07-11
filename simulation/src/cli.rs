@@ -1,10 +1,66 @@
 use clap::{ArgAction, Args, Parser, ValueEnum};
+use std::{net::SocketAddr, str::FromStr};
 
 /// Supported V2X message families to publish.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, ValueEnum)]
 pub enum MessageType {
     /// ETSI Cooperative Awareness Message (CAM).
     Cam,
+}
+
+/// Supported ASN.1 encoding rules for outgoing CAM payloads.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, ValueEnum)]
+pub enum CamEncoding {
+    /// UPER.
+    Uper,
+    /// XML.
+    Xer,
+    /// JSON.
+    Jer,
+}
+
+/// Destination mapping for one message type + encoding + socket target.
+#[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
+pub struct DestinationConfig {
+    pub socket: SocketAddr,
+    pub encoding: CamEncoding,
+    pub message_type: MessageType,
+}
+
+impl FromStr for DestinationConfig {
+    type Err = String;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        let mut parts = value.splitn(3, ':');
+        let message_type_raw = parts.next().unwrap_or_default();
+        let encoding_raw = parts.next().ok_or_else(|| {
+            format!("invalid destination '{value}': expected format message:encoding:host:port")
+        })?;
+        let socket_raw = parts.next().ok_or_else(|| {
+            format!("invalid destination '{value}': expected format message:encoding:host:port")
+        })?;
+
+        if message_type_raw.is_empty() || encoding_raw.is_empty() || socket_raw.is_empty() {
+            return Err(format!(
+                "invalid destination '{value}': expected format message:encoding:host:port"
+            ));
+        }
+
+        let message_type = MessageType::from_str(message_type_raw, true).map_err(|_| {
+            format!("invalid message type '{message_type_raw}' in destination '{value}'")
+        })?;
+        let encoding = CamEncoding::from_str(encoding_raw, true)
+            .map_err(|_| format!("invalid encoding '{encoding_raw}' in destination '{value}'"))?;
+        let socket = SocketAddr::from_str(socket_raw).map_err(|err| {
+            format!("invalid socket '{socket_raw}' in destination '{value}': {err}")
+        })?;
+
+        Ok(Self {
+            socket,
+            encoding,
+            message_type,
+        })
+    }
 }
 
 /// SUMO executable choice used when launching SUMO from this process.
@@ -48,14 +104,11 @@ pub struct SumoLaunchOptions {
 
 /// CLI arguments for the simulation publisher.
 #[derive(Debug, Parser)]
-#[command(about = "Runs SUMO and publishes V2X messages over TraCI")]
+#[command(about = "Runs SUMO via TraCI and publishes encoded V2X messages over UDP")]
 pub struct Cli {
-    /// TraCI host.
-    #[arg(long, default_value = "127.0.0.1")]
-    pub host: String,
-    /// TraCI port.
-    #[arg(long, default_value_t = 8813)]
-    pub port: u16,
+    /// TraCI address.
+    #[arg(long, default_value = "127.0.0.1:8813")]
+    pub traci_addr: SocketAddr,
     /// Whether this process should launch SUMO itself.
     #[arg(long, default_value_t = true, action = ArgAction::Set)]
     pub launch_sumo: bool,
@@ -65,12 +118,10 @@ pub struct Cli {
     /// Timeout for establishing the TraCI connection.
     #[arg(long, default_value_t = 15)]
     pub connect_timeout_secs: u64,
-    /// Comma-separated message types to publish.
-    #[arg(
-        long,
-        value_enum,
-        value_delimiter = ',',
-        default_values_t = [MessageType::Cam]
-    )]
-    pub messages: Vec<MessageType>,
+    /// Repeatable destination mapping in `message:encoding:host:port` format.
+    ///
+    /// Example:
+    /// `--destination cam:uper:127.0.0.1:5000 --destination cam:jer:127.0.0.1:5001`
+    #[arg(long = "destination", default_value = "cam:uper:127.0.0.1:5000")]
+    pub destinations: Vec<DestinationConfig>,
 }

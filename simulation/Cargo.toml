@@ -5,10 +5,12 @@ edition = "2024"
 
 [dependencies]
 c-its-parser = { workspace = true }
+chrono = { workspace = true }
 anyhow = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
 clap = { workspace = true }
+geo-types = { workspace = true }
 
 ctrlc = "3.4.7"
 traci-rs = "0.2.0"

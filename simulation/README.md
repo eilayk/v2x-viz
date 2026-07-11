@@ -25,6 +25,12 @@ From the repository root:
 ```bash
 cargo run -p simulation -- \
   --scenario simulation/scenarios/toronto/osm.sumocfg
+cargo run -p etsi_cam -- \
+  --scenario simulation/scenarios/toronto/osm.sumocfg
+cargo run -p etsi_cam -- \
+  --scenario simulation/scenarios/toronto/osm.sumocfg \
+  --destination cam:uper:127.0.0.1:5000 \
+  --destination cam:jer:127.0.0.1:5001
 ```
 
 Headless SUMO:
