@@ -2,5 +2,8 @@
 name = "v2x-viz"
 version = "0.1.0"
 edition = "2024"
-
 [dependencies]
+eframe = "0.35.0"
+egui = "0.35.0"
+env_logger = "0.11.11"
+walkers = "0.56.0"

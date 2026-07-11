@@ -1,0 +1,17 @@
+error: failed to parse manifest at `/home/eilayk/dev/v2x-viz/visualizer/Cargo.toml`
+
+Caused by:
+  error inheriting `env_logger` from workspace root manifest's `workspace.dependencies.env_logger`
+
+Caused by:
+  failed searching for potential workspace
+  package manifest: `/home/eilayk/dev/v2x-viz/visualizer/Cargo.toml`
+  invalid potential workspace manifest: `/home/eilayk/dev/v2x-viz/Cargo.toml`
+
+  help: to avoid searching for a non-existent workspace, add `[workspace]` to the package manifest
+
+Caused by:
+  failed to parse manifest at `/home/eilayk/dev/v2x-viz/Cargo.toml`
+
+Caused by:
+  this virtual manifest specifies a `dependencies` section, which is not allowed
