@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- generated on 2026-07-10 22:26:12.694816 by Eclipse SUMO osmWebWizard.py v1_27_1+0233-279a72a5393
+<configuration>
+    <net-file value="/home/eilayk/dev/v2x-viz/simulate/sumo/2026-07-10-22-25-46/osm.net.xml.gz"/>
+    <output-trip-file value="/home/eilayk/dev/v2x-viz/simulate/sumo/2026-07-10-22-25-46/osm.passenger.trips.xml"/>
+    <route-file value="/home/eilayk/dev/v2x-viz/simulate/sumo/2026-07-10-22-25-46/osm.passenger.rou.xml"/>
+    <prefix value="veh"/>
+    <trip-attributes value="departLane=&quot;best&quot;"/>
+    <fringe-start-attributes value="departSpeed=&quot;max&quot;"/>
+    <vehicle-class value="passenger"/>
+    <lanes value="True"/>
+    <fringe-factor value="5"/>
+    <allow-fringe.min-length value="1000.0"/>
+    <edge-permission value="passenger"/>
+    <via-edge-types value="highway.motorway,highway.motorway_link,highway.trunk_link,highway.primary_link,highway.secondary_link,highway.tertiary_link"/>
+    <min-distance value="300.0"/>
+    <min-distance.fringe value="10.0"/>
+    <remove-loops value="True"/>
+    <insertion-density value="12.0"/>
+</configuration>
+-->
+
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="veh_passenger" vClass="passenger"/>
+    <trip id="veh0" depart="0.00" from="5105840#0" to="458026975#2" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh1" depart="334.52" from="-24221125#1" to="-30979258#0" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh2" depart="669.05" from="-24221125#1" to="-30979258#0" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh3" depart="1003.57" from="30979258#0" to="458026975#2" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh4" depart="1338.09" from="-24221125#1" to="-30979258#0" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh5" depart="1672.61" from="30979258#0" to="458026975#2" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh6" depart="2007.14" from="30979258#0" to="24221125#1" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh7" depart="2341.66" from="-458026975#2" to="24221125#1" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh8" depart="2676.18" from="-24221125#1" to="458026975#2" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh9" depart="3010.70" from="30979258#0" to="458026975#2" departLane="best" type="veh_passenger" departSpeed="max"/>
+    <trip id="veh10" depart="3345.23" from="-458026975#2" to="-30979258#0" departLane="best" type="veh_passenger" departSpeed="max"/>
+</routes>
