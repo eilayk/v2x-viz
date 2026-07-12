@@ -12,11 +12,22 @@ fn main() -> eframe::Result {
 
     let args = cli::Cli::parse();
     let udp_rx = udp_receiver::spawn(args.listen);
+    let longitude = args.longitude;
+    let latitude = args.latitude;
+    let zoom = args.zoom;
 
     eframe::run_native(
         "v2x-viz",
         Default::default(),
-        Box::new(|cc| Ok(Box::new(App::new(cc.egui_ctx.clone(), udp_rx)))),
+        Box::new(move |cc| {
+            Ok(Box::new(App::new(
+                cc.egui_ctx.clone(),
+                udp_rx,
+                longitude,
+                latitude,
+                zoom,
+            )))
+        }),
     )
 }
 
@@ -25,15 +36,27 @@ struct App {
     map_memory: MapMemory,
     udp_rx: Receiver<udp_receiver::Packet>,
     objects: Arc<Vec<plugins::MapObject>>,
+    longitude: f64,
+    latitude: f64,
 }
 
 impl App {
-    fn new(egui_ctx: egui::Context, udp_rx: Receiver<udp_receiver::Packet>) -> Self {
+    fn new(
+        egui_ctx: egui::Context,
+        udp_rx: Receiver<udp_receiver::Packet>,
+        longitude: f64,
+        latitude: f64,
+        zoom: f64,
+    ) -> Self {
+        let mut map_memory = MapMemory::default();
+        map_memory.set_zoom(zoom).ok();
         Self {
             tiles: HttpTiles::new(OpenStreetMap, egui_ctx),
-            map_memory: MapMemory::default(),
+            map_memory,
             udp_rx,
             objects: Arc::new(vec![]),
+            longitude,
+            latitude,
         }
     }
 }
@@ -53,7 +76,7 @@ impl eframe::App for App {
             Map::new(
                 Some(&mut self.tiles),
                 &mut self.map_memory,
-                lon_lat(17.03664, 51.09916),
+                lon_lat(self.longitude, self.latitude),
             )
             .with_plugin(plugins::ObjectsPlugin {
                 objects: Arc::clone(&self.objects),
