@@ -1,8 +1,10 @@
 use clap::Parser;
+use std::sync::Arc;
 use std::sync::mpsc::Receiver;
 use walkers::{HttpTiles, Map, MapMemory, lon_lat, sources::OpenStreetMap};
 
 mod cli;
+mod plugins;
 mod udp_receiver;
 
 fn main() -> eframe::Result {
@@ -22,6 +24,7 @@ struct App {
     tiles: HttpTiles,
     map_memory: MapMemory,
     udp_rx: Receiver<udp_receiver::Packet>,
+    objects: Arc<Vec<plugins::MapObject>>,
 }
 
 impl App {
@@ -30,6 +33,7 @@ impl App {
             tiles: HttpTiles::new(OpenStreetMap, egui_ctx),
             map_memory: MapMemory::default(),
             udp_rx,
+            objects: Arc::new(vec![]),
         }
     }
 }
@@ -45,11 +49,16 @@ impl eframe::App for App {
             );
         }
 
-        ui.add(Map::new(
-            Some(&mut self.tiles),
-            &mut self.map_memory,
-            lon_lat(17.03664, 51.09916),
-        ));
+        ui.add(
+            Map::new(
+                Some(&mut self.tiles),
+                &mut self.map_memory,
+                lon_lat(17.03664, 51.09916),
+            )
+            .with_plugin(plugins::ObjectsPlugin {
+                objects: Arc::clone(&self.objects),
+            }),
+        );
 
         ui.ctx().request_repaint();
     }
