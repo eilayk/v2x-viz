@@ -1,0 +1,9 @@
+[package]
+name = "v2x"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = { workspace = true }
+
+c-its-parser = { version = "2.2.4", features = ["geo"] }

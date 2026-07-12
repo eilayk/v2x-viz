@@ -1,5 +1,6 @@
 use clap::{ArgAction, Args, Parser, ValueEnum};
 use std::{net::SocketAddr, str::FromStr};
+use v2x::encoding::V2xEncoding;
 
 /// Supported V2X message families to publish.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, ValueEnum)]
@@ -17,6 +18,16 @@ pub enum CamEncoding {
     Xer,
     /// JSON.
     Jer,
+}
+
+impl From<CamEncoding> for V2xEncoding {
+    fn from(enc: CamEncoding) -> V2xEncoding {
+        match enc {
+            CamEncoding::Uper => V2xEncoding::Uper,
+            CamEncoding::Xer => V2xEncoding::Xer,
+            CamEncoding::Jer => V2xEncoding::Jer,
+        }
+    }
 }
 
 /// Destination mapping for one message type + encoding + socket target.
