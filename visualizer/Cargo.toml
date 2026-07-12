@@ -11,3 +11,4 @@ clap = { workspace = true }
 eframe = "0.35.0"
 egui = "0.35.0"
 walkers = "0.56.0"
+v2x = { path = "../v2x" }
