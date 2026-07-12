@@ -7,7 +7,7 @@ use std::{
 use anyhow::{Context, Result};
 use traci_rs::{SimulationScope, TraciClient};
 use v2x::{
-    cam::{build_and_encode_cam, CamTelemetry},
+    cam::{CamTelemetry, build_and_encode_cam},
     encoding::V2xEncoding,
     station::ItsStationType,
 };
@@ -115,9 +115,11 @@ impl V2xPublisher for EtsiCamPublisher {
             )
             .with_context(|| format!("failed to build CAM for vehicle '{id}'"))?;
 
-            self.socket
+            let bytes = self
+                .socket
                 .send_to(&payload, self.destination)
                 .with_context(|| format!("failed to send CAM for vehicle '{id}' via UDP"))?;
+            log::debug!("Sent {bytes} bytes to {}", self.destination);
         }
 
         Ok(())
