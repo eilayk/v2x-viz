@@ -3,10 +3,9 @@ use walkers::{Plugin, Position, Projector};
 
 /// The visual shape of an object on the map.
 pub enum GeoShape {
-    /// Axis-aligned bounding box (e.g. a car or truck).
-    Rect {
-        top_left: Position,
-        bottom_right: Position,
+    /// A polygon shape defined by a list of points (e.g. a rotated car or truck).
+    Polygon {
+        points: Vec<Position>,
     },
     /// Circular marker (e.g. a pedestrian or cyclist).
     #[expect(dead_code, reason = "Support for other shapes not added yet.")]
@@ -39,14 +38,16 @@ impl Plugin for ObjectsPlugin {
         let painter = ui.painter();
         for obj in self.objects.iter() {
             match &obj.shape {
-                GeoShape::Rect {
-                    top_left,
-                    bottom_right,
-                } => {
-                    let tl = projector.project(*top_left).to_pos2();
-                    let br = projector.project(*bottom_right).to_pos2();
-                    let rect = egui::Rect::from_two_pos(tl, br);
-                    painter.rect(rect, 0.0, obj.fill, obj.stroke, egui::StrokeKind::Outside);
+                GeoShape::Polygon { points } => {
+                    let screen_points: Vec<egui::Pos2> = points
+                        .iter()
+                        .map(|p| projector.project(*p).to_pos2())
+                        .collect();
+                    painter.add(egui::Shape::convex_polygon(
+                        screen_points,
+                        obj.fill,
+                        obj.stroke,
+                    ));
                 }
                 GeoShape::Circle { center, radius_px } => {
                     let c = projector.project(*center).to_pos2();
