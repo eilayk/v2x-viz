@@ -135,8 +135,14 @@ fn car_to_map_object(car: &v2x::decoded::DecodedCar) -> Option<plugins::MapObjec
         .map(|v| v as f64)
         .unwrap_or(DEFAULT_VEHICLE_WIDTH_M);
 
+    let heading_deg = car
+        .heading_deg
+        .filter(|v| v.is_finite())
+        .map(|v| v as f64)
+        .unwrap_or(0.0);
+
     let ((top_left_lon, top_left_lat), (bottom_right_lon, bottom_right_lat)) =
-        crate::geo_utils::get_bounding_box(lon, lat, length_m, width_m);
+        crate::geo_utils::get_bounding_box(lon, lat, length_m, width_m, heading_deg);
 
     let top_left = lon_lat(top_left_lon, top_left_lat);
     let bottom_right = lon_lat(bottom_right_lon, bottom_right_lat);

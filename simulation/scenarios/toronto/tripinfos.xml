@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-07-12T18:30:34.199693-05:00 by Eclipse SUMO GUI 1.27.1
+<!-- generated on 2026-07-12T20:28:20.945337-05:00 by Eclipse SUMO GUI 1.27.1
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="simulation/scenarios/toronto/osm.net.xml.gz"/>
-        <route-files value="simulation/scenarios/toronto/osm.passenger.trips.xml"/>
-        <additional-files value="simulation/scenarios/toronto/osm.poly.xml.gz,simulation/scenarios/toronto/output.add.xml"/>
+        <net-file value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.net.xml.gz"/>
+        <route-files value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.passenger.trips.xml"/>
+        <additional-files value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.poly.xml.gz,/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/output.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="simulation/scenarios/toronto/tripinfos.xml"/>
-        <statistic-output value="simulation/scenarios/toronto/stats.xml"/>
+        <tripinfo-output value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/tripinfos.xml"/>
+        <statistic-output value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/stats.xml"/>
     </output>
 
     <time>
@@ -39,7 +39,7 @@
     </traci_server>
 
     <gui_only>
-        <gui-settings-file value="simulation/scenarios/toronto/osm.view.xml"/>
+        <gui-settings-file value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.view.xml"/>
         <start value="true"/>
         <delay value="100"/>
     </gui_only>
@@ -50,6 +50,4 @@
 <tripinfos xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/tripinfo_file.xsd">
     <tripinfo id="veh0" depart="0.00" departLane="5105840#0_0" departPos="5.10" departSpeed="23.55" departDelay="0.00" arrival="26.90" arrivalLane="458026975#2_0" arrivalPos="21.86" arrivalSpeed="14.19" duration="26.90" routeLength="154.59" waitingTime="12.90" waitingCount="1" stopTime="0.00" timeLoss="19.40" rerouteNo="1" devices="tripinfo_veh0 routing_veh0" vType="veh_passenger" speedFactor="1.06" vaporized=""/>
     <tripinfo id="veh1" depart="334.60" departLane="-24221125#1_0" departPos="5.10" departSpeed="10.42" departDelay="0.08" arrival="362.60" arrivalLane="-30979258#0_0" arrivalPos="73.42" arrivalSpeed="10.41" duration="28.00" routeLength="184.68" waitingTime="6.60" waitingCount="1" stopTime="0.00" timeLoss="10.28" rerouteNo="0" devices="tripinfo_veh1 routing_veh1" vType="veh_passenger" speedFactor="0.94" vaporized=""/>
-    <tripinfo id="veh2" depart="669.10" departLane="-24221125#1_0" departPos="5.10" departSpeed="11.23" departDelay="0.05" arrival="685.70" arrivalLane="-30979258#0_0" arrivalPos="73.42" arrivalSpeed="11.22" duration="16.60" routeLength="184.68" waitingTime="0.00" waitingCount="0" stopTime="0.00" timeLoss="0.10" rerouteNo="0" devices="tripinfo_veh2 routing_veh2" vType="veh_passenger" speedFactor="1.01" vaporized=""/>
-    <tripinfo id="veh3" depart="1003.60" departLane="30979258#0_1" departPos="5.10" departSpeed="12.03" departDelay="0.03" arrival="1021.80" arrivalLane="458026975#2_0" arrivalPos="21.86" arrivalSpeed="14.08" duration="18.20" routeLength="117.74" waitingTime="4.40" waitingCount="1" stopTime="0.00" timeLoss="8.61" rerouteNo="1" devices="tripinfo_veh3 routing_veh3" vType="veh_passenger" speedFactor="1.08" vaporized=""/>
 </tripinfos>
