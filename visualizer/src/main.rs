@@ -1,12 +1,12 @@
 use clap::Parser;
-use std::collections::HashMap;
-use std::sync::Arc;
 use std::sync::mpsc::Receiver;
+use std::{sync::Arc, time::Duration};
 use walkers::{HttpTiles, Map, MapMemory, lon_lat, sources::OpenStreetMap};
 
 mod cli;
 mod geo_utils;
 mod plugins;
+mod tracked_objects;
 mod udp_receiver;
 
 fn main() -> eframe::Result {
@@ -37,7 +37,7 @@ struct App {
     tiles: HttpTiles,
     map_memory: MapMemory,
     udp_rx: Receiver<udp_receiver::Packet>,
-    cars: HashMap<u32, v2x::decoded::DecodedCar>,
+    objects: tracked_objects::TrackedObjects<v2x::decoded::V2xMessage>,
     longitude: f64,
     latitude: f64,
 }
@@ -56,7 +56,7 @@ impl App {
             tiles: HttpTiles::new(OpenStreetMap, egui_ctx),
             map_memory,
             udp_rx,
-            cars: HashMap::new(),
+            objects: tracked_objects::TrackedObjects::new(),
             longitude,
             latitude,
         }
@@ -64,7 +64,15 @@ impl App {
 
     /// Rebuild the plugin's object list from the current car state.
     fn build_objects(&self) -> Arc<Vec<plugins::MapObject>> {
-        Arc::new(self.cars.values().filter_map(car_to_map_object).collect())
+        Arc::new(
+            self.objects
+                .values()
+                .filter_map(|msg| match msg {
+                    v2x::decoded::V2xMessage::Car(car) => car_to_map_object(car),
+                    _ => None,
+                })
+                .collect(),
+        )
     }
 }
 
@@ -78,19 +86,28 @@ impl eframe::App for App {
                 packet.source
             );
             match v2x::decoding::decode_v2x(&packet.data) {
-                Ok(v2x::decoded::V2xMessage::Car(car)) => {
-                    log::debug!(
-                        "station {} at ({:.6}, {:.6})",
-                        car.station_id,
-                        car.latitude_deg,
-                        car.longitude_deg,
-                    );
-                    self.cars.insert(car.station_id, car);
+                Ok(msg) => {
+                    let station_id = match &msg {
+                        v2x::decoded::V2xMessage::Car(car) => {
+                            log::debug!(
+                                "station {} at ({:.6}, {:.6})",
+                                car.station_id,
+                                car.latitude_deg,
+                                car.longitude_deg,
+                            );
+                            Some(car.station_id)
+                        }
+                        _ => None,
+                    };
+                    if let Some(id) = station_id {
+                        self.objects.insert(id, msg);
+                    }
                 }
-                Ok(_) => {}
                 Err(e) => log::warn!("failed to decode V2X packet: {e}"),
             }
         }
+
+        self.objects.clean_expired(Duration::from_millis(150));
 
         let objects = self.build_objects();
 
@@ -142,7 +159,10 @@ fn car_to_map_object(car: &v2x::decoded::DecodedCar) -> Option<plugins::MapObjec
         .unwrap_or(0.0);
 
     let corners = crate::geo_utils::get_corners(lon, lat, length_m, width_m, heading_deg);
-    let points = corners.into_iter().map(|(lon, lat)| lon_lat(lon, lat)).collect();
+    let points = corners
+        .into_iter()
+        .map(|(lon, lat)| lon_lat(lon, lat))
+        .collect();
 
     Some(plugins::MapObject {
         shape: plugins::GeoShape::Polygon { points },
