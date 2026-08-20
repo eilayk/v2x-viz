@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-07-12T20:28:20.945587-05:00 by Eclipse SUMO GUI 1.27.1
+<!-- generated on 2026-08-20T00:58:52.900953-05:00 by Eclipse SUMO GUI 1.27.1
 <sumoConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/sumoConfiguration.xsd">
 
     <input>
-        <net-file value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.net.xml.gz"/>
-        <route-files value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.passenger.trips.xml"/>
-        <additional-files value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.poly.xml.gz,/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/output.add.xml"/>
+        <net-file value="simulation/scenarios/toronto/osm.net.xml.gz"/>
+        <route-files value="simulation/scenarios/toronto/osm.passenger.trips.xml"/>
+        <additional-files value="simulation/scenarios/toronto/osm.poly.xml.gz,simulation/scenarios/toronto/output.add.xml"/>
     </input>
 
     <output>
-        <tripinfo-output value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/tripinfos.xml"/>
-        <statistic-output value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/stats.xml"/>
+        <tripinfo-output value="simulation/scenarios/toronto/tripinfos.xml"/>
+        <statistic-output value="simulation/scenarios/toronto/stats.xml"/>
     </output>
 
     <time>
@@ -39,23 +39,9 @@
     </traci_server>
 
     <gui_only>
-        <gui-settings-file value="/home/eilayk/dev/v2x-viz/simulation/scenarios/toronto/osm.view.xml"/>
+        <gui-settings-file value="simulation/scenarios/toronto/osm.view.xml"/>
         <start value="true"/>
         <delay value="100"/>
     </gui_only>
 
 </sumoConfiguration>
--->
-
-<statistics xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/statistic_file.xsd">
-    <performance clockBegin="1783902500.95" clockEnd="1783902543.35" clockDuration="42.40" traciDuration="0.53" realTimeFactor="9.92" vehicleUpdatesPerSecond="12.95" personUpdatesPerSecond="0.00" begin="0.00" end="420.80" duration="420.80"/>
-    <vehicles loaded="3" inserted="2" running="0" waiting="0"/>
-    <teleports total="0" jam="0" yield="0" wrongLane="0"/>
-    <safety collisions="0" emergencyStops="0" emergencyBraking="0"/>
-    <persons loaded="0" running="0" jammed="0"/>
-    <personTeleports total="0" abortWait="0" wrongDest="0"/>
-    <vehicleTripStatistics count="2" routeLength="169.63" speed="6.17" duration="27.45" waitingTime="9.75" timeLoss="14.84" departDelay="0.04" departDelayWaiting="-1.00" totalTravelTime="54.90" totalDepartDelay="0.08"/>
-    <pedestrianStatistics number="0" routeLength="0.00" duration="0.00" timeLoss="0.00"/>
-    <rideStatistics number="0"/>
-    <transportStatistics number="0"/>
-</statistics>
